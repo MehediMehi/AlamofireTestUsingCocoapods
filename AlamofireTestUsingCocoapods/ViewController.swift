@@ -19,8 +19,17 @@ class ViewController: UIViewController {
 
     @IBAction func getButtonTapped(_ sender: Any) {
         // Alamofire 4
-        Alamofire.request("https://jsonplaceholder.typicode.com/posts").response { response in // method defaults to `.get`
+        Alamofire.request("https://api.darksky.net/forecast/2a3099a6c73317d36830f4c9b80eba93/37.8267,-122.4233").response { response in // method defaults to `.get`
             debugPrint(response)
+            
+            /*do{
+                //here dataResponse received from a network request
+                let jsonResponse = try JSONSerialization.jsonObject(with:
+                    dataResponse, options: [])
+                print(jsonResponse) //Response result
+            } catch let parsingError {
+                print("Error", parsingError)
+            }*/
             
             self.showTextView.text = String(bytes: response.data!, encoding: .utf8)
         }
