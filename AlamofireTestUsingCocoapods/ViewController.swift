@@ -12,6 +12,8 @@ import Alamofire
 class ViewController: UIViewController {
 
     @IBOutlet weak var showTextView: UITextView!
+    @IBOutlet weak var showTextViewTime: UITextView!
+    @IBOutlet weak var showTextViewAvg: UITextView!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -31,8 +33,66 @@ class ViewController: UIViewController {
                 print("Error", parsingError)
             }*/
             
-            self.showTextView.text = String(bytes: response.data!, encoding: .utf8)
+            //self.showTextView.text = String(bytes: response.data!, encoding: .utf8)
+            //var dict1: [String:String] = [:]
+            var dict1 = self.convertToDictionary(text: String(bytes: response.data!, encoding: .utf8)!)
+            //let str = dict1!["currently"]! as! String
+            let dict2 = dict1!["currently"] as? [String : Any]
+            let summary = dict2!["summary"]
+            let timestramp = dict2!["time"] //as? String
+            let tempTime = timestramp as? Double
+            let dateTime = self.getDateFromTimeStamp(timeStamp: tempTime!)
+            let minutely = dict1!["minutely"] as? [String : Any]
+            let data = minutely!["data"] as! NSArray
+            
+            //let dict2 = self.convertToDictionary(text: dict1!["currently"] as! String)
+            print("Dict1 starts here!")
+            print(dict1 as Any)
+            print("Dict1 ends here!")
+            print(dict1!["currently"])
+            //print(dict1!["currently"] as Any)
+            print(dict2!["summary"] as Any)
+            print(dateTime)
+            print(timestramp)
+            print(tempTime)
+            print(type(of: dict2))
+            print(type(of: dict1))
+            print(type(of: timestramp))
+            print(type(of: tempTime))
+            //print(dict2["summary"])
+            print(minutely)
+            print("End of minutely")
+            print(data[0])
+            self.showTextView.text = summary as? String
+            self.showTextViewTime.text = dateTime as? String
+            
         }
+    }
+    
+    //jeson to dictionary
+    func convertToDictionary(text: String) -> [String: Any]? {
+        if let data = text.data(using: .utf8) {
+            do {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        return nil
+    }
+    
+    //timestramp to formated date
+    func getDateFromTimeStamp(timeStamp : Double) -> String {
+        
+        let date = NSDate(timeIntervalSince1970: timeStamp)
+        
+        let dayTimePeriodFormatter = DateFormatter()
+        dayTimePeriodFormatter.dateFormat = "MMM d, yyyy h:mm a"
+        // UnComment below to get only time
+        //  dayTimePeriodFormatter.dateFormat = "hh:mm a"
+        
+        let dateString = dayTimePeriodFormatter.string(from: date as Date)
+        return dateString
     }
     
 }
