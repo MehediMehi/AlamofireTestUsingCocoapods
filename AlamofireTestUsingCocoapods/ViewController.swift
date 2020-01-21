@@ -39,30 +39,47 @@ class ViewController: UIViewController {
             //let str = dict1!["currently"]! as! String
             let dict2 = dict1!["currently"] as? [String : Any]
             let summary = dict2!["summary"]
-            let timestramp = dict2!["time"] //as? String
-            let tempTime = timestramp as? Double
+            let timestamp = dict2!["time"] //as? String
+            let tempTime = timestamp as? Double
             let dateTime = self.getDateFromTimeStamp(timeStamp: tempTime!)
             let minutely = dict1!["minutely"] as? [String : Any]
             let data = minutely!["data"] as! NSArray
-            
+            let arrSize = data.count
+            if(arrSize > 1){
+                var iterator = ""
+                var sumOfPrecipProbability = 0.0
+                var precipProbabilityCounter = 0.0
+                for iterator in data{
+                    let dict3 = iterator as? [String : Any]
+                    var precipProbability = dict3!["precipProbability"] as? Double
+                    if precipProbability != 0{
+                        sumOfPrecipProbability = sumOfPrecipProbability + precipProbability!
+                        precipProbabilityCounter = precipProbabilityCounter + 1
+                    }
+                }
+                print(sumOfPrecipProbability)
+                print(precipProbabilityCounter)
+                let averagePrecipProbability = (sumOfPrecipProbability/precipProbabilityCounter)
+                print(averagePrecipProbability)
+                self.showTextViewAvg.text = String(averagePrecipProbability)
+            }
             //let dict2 = self.convertToDictionary(text: dict1!["currently"] as! String)
-            print("Dict1 starts here!")
-            print(dict1 as Any)
-            print("Dict1 ends here!")
-            print(dict1!["currently"])
-            //print(dict1!["currently"] as Any)
-            print(dict2!["summary"] as Any)
-            print(dateTime)
-            print(timestramp)
-            print(tempTime)
-            print(type(of: dict2))
-            print(type(of: dict1))
-            print(type(of: timestramp))
-            print(type(of: tempTime))
-            //print(dict2["summary"])
-            print(minutely)
-            print("End of minutely")
-            print(data[0])
+//            print("Dict1 starts here!")
+//            print(dict1 as Any)
+//            print("Dict1 ends here!")
+//            print(dict1!["currently"])
+//            print(dict2!["summary"] as Any)
+//            print(dateTime)
+//            print(timestamp)
+//            print(tempTime)
+//            print(type(of: dict2))
+//            print(type(of: dict1))
+//            print(type(of: timestamp))
+//            print(type(of: tempTime))
+//            print(minutely)
+//            print("End of minutely")
+//            print(data[0])
+//            print(arrSize)
             self.showTextView.text = summary as? String
             self.showTextViewTime.text = dateTime as? String
             
@@ -87,7 +104,7 @@ class ViewController: UIViewController {
         let date = NSDate(timeIntervalSince1970: timeStamp)
         
         let dayTimePeriodFormatter = DateFormatter()
-        dayTimePeriodFormatter.dateFormat = "MMM d, yyyy h:mm a"
+        dayTimePeriodFormatter.dateFormat = "MMM d, yyyy h:mm:ss a"
         // UnComment below to get only time
         //  dayTimePeriodFormatter.dateFormat = "hh:mm a"
         
